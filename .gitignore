@@ -1,0 +1,11 @@
+*.swp
+*.pyc
+*.pkl
+*.tar
+*.idea
+*.json
+
+logs/
+__pycache__/
+.ipynb_checkpoints/
+tmp/
