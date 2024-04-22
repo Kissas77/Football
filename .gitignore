@@ -2,9 +2,10 @@
 *.pyc
 *.pkl
 *.tar
-*.idea
 *.json
+*.log
 
+*.idea
 logs/
 __pycache__/
 .ipynb_checkpoints/
