@@ -8,6 +8,16 @@ from torch.distributions import Categorical
 
 
 class Model(nn.Module):
+
+    """
+        player ->                      FC ->                       FC -> Policy(Action)
+        ball ->                        FC ->
+        left_team ->  FC -> conv1d ->  FC -> FC(Concat) -> LSTM -> FC -> Policy(Dir)
+        right_team -> FC -> conv1d ->  FC ->
+        left_closest ->                FC ->                       FC -> Value
+        right_closest ->               FC ->
+    """
+
     def __init__(self, arg_dict, device=None):
         super(Model, self).__init__()
         self.device = None
