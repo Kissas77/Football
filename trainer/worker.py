@@ -114,7 +114,7 @@ def worker(worker_num, center_model, data_queue, signal_queue, summary_queue, ar
             if done:
                 if score > 0:
                     win = 1
-                print(f"[TRAJ] score: {score}, total reward: {tot_reward:.2f}, loop time: {round(loop_t/steps, 4)}, wait time: {round(wait_t/steps, 4)}")
+                print(f"[Episode] score: {score}, total reward: {tot_reward:.2f}, loop time: {round(loop_t/steps, 4)}, wait time: {round(wait_t/steps, 4)}")
                 summary_data = (win, score, tot_reward, steps, 0, loop_t / steps, forward_t / steps, wait_t / steps)
                 summary_queue.put(summary_data)
 
