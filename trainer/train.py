@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.multiprocessing as mp
 
-from trainer.worker import worker
+from trainer.worker_rtgs import worker
 from trainer.learner import learner
 from trainer.evaluator import evaluator
 from config import BASEDIR
@@ -118,7 +118,7 @@ if __name__ == '__main__':
         "k_epoch": 3,
         "learning_rate": 0.0001,  # 1e-4
         "gamma": 0.993,
-        "lmbda": 0.4,
+        "lmbda": 0.5,
         "entropy_coef": 0.0001,  # entropy regularization
         "grad_clip": 3.0,
         "eps_clip": 0.1,
