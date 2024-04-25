@@ -52,7 +52,7 @@ class Algo():
             # rtgs
             rtgs = advantage + v.detach()
             # normalize advantage
-            adv = (advantage - advantage.mean(dim=1,  keepdim=True)) / (advantage.std(dim=1,  keepdim=True) + 1e-10)
+            adv = (advantage - advantage.mean(dim=(0, 1), keepdim=True)) / (advantage.std(dim=(0, 1), keepdim=True) + 1e-10)
 
             # data_with_adv shape: (buffer_size, trans_len, rollout_len, batch_size, *)
             data_with_adv.append((s, a, m, r, s_prime, done_mask, prob, need_move, rtgs, adv))
