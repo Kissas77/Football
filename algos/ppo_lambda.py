@@ -41,11 +41,12 @@ class Algo():
             # rtgs lambda-return
             done_mask_ = done_mask.cpu().numpy()
             r_ = r.cpu().numpy()
-            rt_ = rt.cpu().numpy()
+            # rt_ = rt.cpu().numpy()
             v_prime_ = v_prime.cpu().numpy()
-            lambda_tmp = rt_[-1]  # if not rt: lambda_tmp = np.array([0])
-            lambda_return = [lambda_tmp]  # if not rt: lambda_return = []
-            for i in range(len(r_) - 2, -1, -1):  # if not rt: for i in range(len(r_) - 1, -1, -1):
+            # lambda_tmp = rt_[-1]  # method 1
+            lambda_tmp = r_[-1] + self.gamma * done_mask_[-1] * v_prime_[-1]  # method 2
+            lambda_return = [lambda_tmp]
+            for i in range(len(r_) - 2, -1, -1):
                 lambda_tmp = r_[i] + self.gamma * done_mask_[i] * ((1-self.lmbda) * v_prime_[i] + self.lmbda * lambda_tmp)
                 lambda_return.append(lambda_tmp)
             lambda_return.reverse()  # shape: (rollout_len, batch_size, 1)
