@@ -179,10 +179,13 @@ def learner(center_model, queue, signal_queue, summary_queue, arg_dict):
                 gail_pi_loss, gail_exp_loss, gail_pi_acc, gail_exp_acc = gail.train(discriminator, data, data_exp)
             # update actor-critic
             loss, pi_loss, v_loss, entropy, move_entropy = algo.train(model, data)
+            optimization_step += arg_dict["buffer_size"] * arg_dict["k_epoch"]
+            # lr decay
+            new_lr = arg_dict["learning_rate"] * (1 - optimization_step / 2.5e5)
+            model.optimizer.param_groups[0]["lr"] = new_lr
             train_t = time.time() - t2
 
             # print log
-            optimization_step += arg_dict["buffer_size"] * arg_dict["k_epoch"]
             print(f"[RL] step: {optimization_step}, loss: {loss:.3f}, data_q: {queue.qsize()}, summary_q: {summary_queue.qsize()}, "
                   f"make data time: {round(data_t,4)}, train time: {round(train_t,4)}")
             if arg_dict['use_gail']:
