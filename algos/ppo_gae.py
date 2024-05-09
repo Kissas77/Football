@@ -51,7 +51,7 @@ class Algo():
             advantage = torch.tensor(adv_lst, dtype=torch.float, device=model.device)
             # rtgs
             rtgs = advantage + v.detach()
-            # normalize advantage
+            # Trick: normalize advantage
             adv = (advantage - advantage.mean(dim=(0, 1), keepdim=True)) / (advantage.std(dim=(0, 1), keepdim=True) + 1e-10)
 
             # data_with_adv shape: (buffer_size, trans_len, rollout_len, batch_size, *)
@@ -88,6 +88,7 @@ class Algo():
                 # optimize model
                 model.optimizer.zero_grad()
                 loss.backward()
+                # Trick: clip grad
                 nn.utils.clip_grad_norm_(model.parameters(), self.grad_clip)
                 model.optimizer.step()
 

@@ -180,9 +180,9 @@ def learner(center_model, queue, signal_queue, summary_queue, arg_dict):
             # update actor-critic
             loss, pi_loss, v_loss, entropy, move_entropy = algo.train(model, data)
             optimization_step += arg_dict["buffer_size"] * arg_dict["k_epoch"]
-            # lr decay
-            new_lr = arg_dict["learning_rate"] * (1 - optimization_step / 2.5e5)
-            model.optimizer.param_groups[0]["lr"] = new_lr
+            # Trick: lr decay
+            # new_lr = arg_dict["learning_rate"] * (1 - optimization_step / 2.5e5)
+            # model.optimizer.param_groups[0]["lr"] = new_lr
             train_t = time.time() - t2
 
             # print log
