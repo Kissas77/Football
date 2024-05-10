@@ -117,17 +117,17 @@ class Model(nn.Module):
         s_player_prime_batch, s_ball_prime_batch, s_left_prime_batch, s_left_closest_prime_batch, \
         s_right_prime_batch, s_right_closest_prime_batch, avail_prime_batch = [], [], [], [], [], [], []
         h1_in_batch, h2_in_batch, h1_out_batch, h2_out_batch = [], [], [], []
-        real_a_batch, a_batch, m_batch, r_batch, rt_batch, prob_batch, done_batch, need_move_batch = [], [], [], [], [], [], [], []
+        real_a_batch, a_batch, m_batch, r_batch, rt_batch, prob_batch, prob_a_batch, prob_m_batch, done_batch, need_move_batch = [], [], [], [], [], [], [], [], [], []
 
         for rollout in data:
             s_player_lst, s_ball_lst, s_left_lst, s_left_closest_lst, s_right_lst, s_right_closest_lst, avail_lst = [], [], [], [], [], [], []
             s_player_prime_lst, s_ball_prime_lst, s_left_prime_lst, s_left_closest_prime_lst, \
             s_right_prime_lst, s_right_closest_prime_lst, avail_prime_lst = [], [], [], [], [], [], []
             h1_in_lst, h2_in_lst, h1_out_lst, h2_out_lst = [], [], [], []
-            real_a_list, a_lst, m_lst, r_lst, rt_lst, prob_lst, done_lst, need_move_lst = [], [], [], [], [], [], [], []
+            real_a_list, a_lst, m_lst, r_lst, rt_lst, prob_lst, prob_a_lst, prob_m_lst, done_lst, need_move_lst = [], [], [], [], [], [], [], [], [], []
 
             for transition in rollout:
-                s, real_a, a, m, r, rt, s_prime, prob, done, need_move = transition
+                s, real_a, a, m, r, rt, s_prime, prob, prob_a, prob_m, done, need_move = transition
 
                 s_player_lst.append(s["player"])
                 s_ball_lst.append(s["ball"])
@@ -157,6 +157,8 @@ class Model(nn.Module):
                 r_lst.append([r])
                 rt_lst.append([rt])
                 prob_lst.append([prob])
+                prob_a_lst.append([prob_a])
+                prob_m_lst.append([prob_m])
                 done_mask = 0 if done else 1
                 done_lst.append([done_mask])
                 need_move_lst.append([need_move]),
@@ -187,6 +189,8 @@ class Model(nn.Module):
             r_batch.append(r_lst)
             rt_batch.append(rt_lst)
             prob_batch.append(prob_lst)
+            prob_a_batch.append(prob_a_lst)
+            prob_m_batch.append(prob_m_lst)
             done_batch.append(done_lst)
             need_move_batch.append(need_move_lst)
 
@@ -214,13 +218,15 @@ class Model(nn.Module):
                        torch.tensor(h2_out_batch, dtype=torch.float, device=self.device).squeeze(1).permute(1, 0, 2))
         }
 
-        real_a, a, m, r, rt, done_mask, prob, need_move = torch.tensor(real_a_batch, device=self.device).permute(1, 0, 2),\
-                                                          torch.tensor(a_batch, device=self.device).permute(1, 0, 2), \
-                                                          torch.tensor(m_batch, device=self.device).permute(1, 0, 2), \
-                                                          torch.tensor(r_batch, dtype=torch.float, device=self.device).permute(1, 0, 2), \
-                                                          torch.tensor(rt_batch, dtype=torch.float, device=self.device).permute(1, 0, 2), \
-                                                          torch.tensor(done_batch, dtype=torch.float, device=self.device).permute(1, 0, 2), \
-                                                          torch.tensor(prob_batch, dtype=torch.float, device=self.device).permute(1, 0, 2), \
-                                                          torch.tensor(need_move_batch, dtype=torch.float, device=self.device).permute(1, 0, 2)
+        real_a = torch.tensor(real_a_batch, device=self.device).permute(1, 0, 2)
+        a = torch.tensor(a_batch, device=self.device).permute(1, 0, 2)
+        m = torch.tensor(m_batch, device=self.device).permute(1, 0, 2)
+        r = torch.tensor(r_batch, dtype=torch.float, device=self.device).permute(1, 0, 2)
+        rt = torch.tensor(rt_batch, dtype=torch.float, device=self.device).permute(1, 0, 2)
+        done_mask = torch.tensor(done_batch, dtype=torch.float, device=self.device).permute(1, 0, 2)
+        prob = torch.tensor(prob_batch, dtype=torch.float, device=self.device).permute(1, 0, 2)
+        prob_a = torch.tensor(prob_a_batch, dtype=torch.float, device=self.device).permute(1, 0, 2)
+        prob_m = torch.tensor(prob_m_batch, dtype=torch.float, device=self.device).permute(1, 0, 2)
+        need_move = torch.tensor(need_move_batch, dtype=torch.float, device=self.device).permute(1, 0, 2)
 
-        return [s, real_a, a, m, r, rt, s_prime, done_mask, prob, need_move]
+        return [s, real_a, a, m, r, rt, s_prime, done_mask, prob, prob_a, prob_m, need_move]

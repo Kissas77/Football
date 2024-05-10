@@ -33,7 +33,7 @@ class Algo():
         data_with_adv = []
         # data shape: (buffer_size, trans_len, rollout_len, batch_size, *)
         for mini_batch in data:  # mini_batch: [s, real_a, a, m, r, s_prime, done_mask, prob, need_move]
-            s, real_a, a, m, r, rt, s_prime, done_mask, prob, need_move = mini_batch
+            s, real_a, a, m, r, rt, s_prime, done_mask, prob, prob_a, prob_m, need_move = mini_batch
             with torch.no_grad():  # input shape:(rollout_len, batch_size, *)
                 pi, pi_move, v, _ = model(s)  # output shape:(rollout_len, batch_size, 1)
                 pi_prime, pi_m_prime, v_prime, _ = model(s_prime)
@@ -55,12 +55,12 @@ class Algo():
             adv = (advantage - advantage.mean(dim=(0, 1), keepdim=True)) / (advantage.std(dim=(0, 1), keepdim=True) + 1e-10)
 
             # data_with_adv shape: (buffer_size, trans_len, rollout_len, batch_size, *)
-            data_with_adv.append((s, a, m, r, s_prime, done_mask, prob, need_move, rtgs, adv))
+            data_with_adv.append((s, a, m, r, s_prime, done_mask, prob, prob_a, prob_m, need_move, rtgs, adv))
 
         for i in range(self.K_epoch):
             for mini_batch in data_with_adv:  # mini_batch shape: (trans_len, rollout_len, batch_size, *)
                 # samples nums: rollout_len * batch_size
-                s, a, m, r, s_prime, done_mask, prob, need_move, rtgs, adv = mini_batch
+                s, a, m, r, s_prime, done_mask, prob, prob_a, prob_m, need_move, rtgs, adv = mini_batch
                 pi, pi_move, v, _ = model(s)  # pi shape: (horizon, batch_size, action_len)
                 # pi_prime, pi_m_prime, v_prime, _ = model(s_prime)  # action, move, value, lstm_hidden
 

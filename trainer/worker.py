@@ -15,7 +15,7 @@ def get_action(a_prob, m_prob):
     a = Categorical(a_prob).sample().item()
     m, need_m = 0, 0
     prob_selected_a = a_prob[0][0][a].item()
-    prob_selected_m = 0
+    prob_selected_m = 0.5
     if a == 0:
         real_action = a
         prob = prob_selected_a
@@ -85,7 +85,7 @@ def worker(worker_num, center_model, data_queue, signal_queue, summary_queue, ar
             with torch.no_grad():
                 a_prob, m_prob, _, h_out = model(state_dict_tensor)
             forward_t += time.time() - t1
-            real_action, a, m, need_m, prob, prob_selected_a, prob_selected_m = get_action(a_prob, m_prob)
+            real_action, a, m, need_m, prob, prob_a, prob_m = get_action(a_prob, m_prob)
 
             pre_obs_deq.append(obs[0])
             prev_obs = obs
@@ -98,7 +98,7 @@ def worker(worker_num, center_model, data_queue, signal_queue, summary_queue, ar
             state_dict["hidden"] = (h1_in.numpy(), h2_in.numpy())
             state_prime_dict["hidden"] = (h1_out.numpy(), h2_out.numpy())
             round_done = True if done or rew != 0. else False
-            transition = (state_dict, real_action, a, m, fin_r, rt,  state_prime_dict, prob, round_done, need_m)
+            transition = (state_dict, real_action, a, m, fin_r, rt,  state_prime_dict, prob, prob_a, prob_m, round_done, need_m)
             rollout.append(transition)
             if len(rollout) == arg_dict["rollout_len"]:
                 data_queue.put(rollout)
