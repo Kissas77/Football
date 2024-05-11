@@ -68,21 +68,17 @@ class Algo():
                 pi_m = pi_move.gather(2, m)  # pi_m shape: (horizon, batch_size, 1)
                 ratio_a = torch.exp(torch.log(pi_a) - torch.log(prob_a))  # a/b == exp(log(a)-log(b))
                 ratio_m = need_move * torch.exp(torch.log(pi_m) - torch.log(prob_m))
-
-                surr1_a = ratio_a * adv
-                surr2_a = torch.clamp(ratio_a, 1-self.eps_clip, 1+self.eps_clip) * adv
-                surr_a_loss = -torch.min(surr1_a, surr2_a)
-                surr1_m = ratio_m * adv
-                surr2_m = torch.clamp(ratio_a, 1-self.eps_clip, 1+self.eps_clip) * adv
-                surr_m_loss = -torch.min(surr1_m, surr2_m)
-                surr_loss = surr_a_loss + surr_m_loss
+                ratio = torch.cat((ratio_a, ratio_m), dim=2)
+                surr1 = ratio * adv
+                surr2 = torch.clamp(ratio, 1-self.eps_clip, 1+self.eps_clip) * adv
+                surr_loss = -torch.min(surr1, surr2)
 
                 # entropy loss
                 # entropy_a = -torch.sum(pi*torch.log(pi), dim=2, keepdim=True)
                 entropy_a = -torch.log(pi_a)
                 # entropy_m = -need_move * torch.sum(pi_move*torch.log(pi_move), dim=2, keepdim=True)
                 entropy_m = -need_move * torch.log(pi_m)
-                entropy = entropy_a + entropy_m
+                entropy = torch.cat((entropy_a, entropy_m), dim=2)
                 entropy_loss = -1 * self.entropy_coef * entropy
 
                 # value loss
