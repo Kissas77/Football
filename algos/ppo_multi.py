@@ -4,6 +4,7 @@
     2 add entropy
     3 add clip_grad_norm
     4 add advantage normalization
+    5 multi-discrete policy
 """
 
 
