@@ -75,7 +75,7 @@ def evaluator(center_model, signal_queue, summary_queue, arg_dict):
             with torch.no_grad():
                 a_prob, m_prob, _, h_out = model(state_dict_tensor)
             forward_t += time.time() - t1
-            real_action, a, m, need_m, prob, prob_selected_a, prob_selected_m = get_action(a_prob, m_prob)
+            real_action, a, m, need_m, prob, prob_a, prob__m = get_action(a_prob, m_prob)
 
             pre_obs_deq.append(obs[0])
             prev_obs = obs

@@ -7,10 +7,10 @@ def calc_rtgs(episode: collections.deque, gamma: float) -> None:
     l = len(episode)
     discounted_r = 0.
     for _ in range(l):
-        state_dict, real_action, a, m, fin_r, state_prime_dict, prob, done, need_m = episode.pop()
+        state_dict, real_action, a, m, fin_r, state_prime_dict, prob, prob_a, prob_m, done, need_m = episode.pop()
         discounted_r = fin_r + gamma * discounted_r
         # record.append(f"r: {fin_r}, rt: {discounted_r}")
-        transition = (state_dict, real_action, a, m, fin_r, discounted_r, state_prime_dict, prob, done, need_m)
+        transition = (state_dict, real_action, a, m, fin_r, discounted_r, state_prime_dict, prob, prob_a, prob_m, done, need_m)
         episode.appendleft(transition)
     assert len(episode) == l, f"[Error] episode length: {len(episode)}"
 
