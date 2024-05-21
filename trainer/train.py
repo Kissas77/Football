@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.multiprocessing as mp
 
-from trainer.worker_rtgs import worker
+from trainer.worker import worker
 from trainer.learner import learner
 from trainer.evaluator import evaluator
 from config import BASEDIR
@@ -103,22 +103,22 @@ def main(arg_dict):
 if __name__ == '__main__':
     arg_dict = {
         "env": "11_vs_11_stochastic",
-        "workers": 25,  # if test: 1
-        "batch_size": 32,  # default 32, if test: 2.
-        "buffer_size": 3,  # default 3
-        "rollout_len": 30,  # default 30, if test: 3.
+        "workers": 1,  # if test: 1
+        "batch_size": 2,  # default 32, if test: 2.
+        "buffer_size": 1,  # default 3
+        "rollout_len": 3,  # default 30, if test: 3.
         "trained_model_path": None,  # use when you want to continue training from given model.
 
         "encoder": "encoder",
         "rewarder": "rewarder",
         "model": "conv1d",
-        "algorithm": "ppo_lambda",
+        "algorithm": "ppo_multi",
 
         "lstm_size": 256,
         "k_epoch": 3,
         "learning_rate": 0.0001,  # 1e-4
         "gamma": 0.993,
-        "lmbda": 0.5,
+        "lmbda": 0.96,
         "entropy_coef": 0.0001,  # entropy regularization
         "grad_clip": 3.0,
         "eps_clip": 0.1,
